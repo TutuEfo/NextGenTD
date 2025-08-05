@@ -10,6 +10,9 @@ public class GridTile : MonoBehaviour
     public Color hoverColor = Color.yellow;
     public Color clickedColor = Color.green;
 
+    public bool IsOccupied { get; private set; } = false;
+    public bool IsPath { get; set; } = false;
+
     private bool isSelected = false;
 
     private void Awake()
@@ -20,7 +23,7 @@ public class GridTile : MonoBehaviour
 
     private void OnMouseEnter()
     {
-        if (!isSelected)
+        if (!isSelected && !IsOccupied)
         {
             _renderer.color = hoverColor;
         }
@@ -28,7 +31,7 @@ public class GridTile : MonoBehaviour
 
     private void OnMouseExit()
     {
-        if (!isSelected)
+        if (!isSelected && !IsOccupied)
         {
             _renderer.color = _defaultColor;
         }
@@ -36,10 +39,18 @@ public class GridTile : MonoBehaviour
 
     private void OnMouseDown()
     {
+        if (IsOccupied)
+        {
+            Debug.Log("Tile is already occupied.");
+            return;
+        }
+
         isSelected = !isSelected;
         _renderer.color = isSelected ? clickedColor : _defaultColor;
 
         // TODO: Call GrindManager or another system to handle Tower Placement.
+        // For now:
+        IsOccupied = isSelected;
         Debug.Log($"Tile clicked at {transform.position}");
     }
 }
