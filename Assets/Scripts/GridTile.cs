@@ -5,6 +5,8 @@ using UnityEngine;
 
 public class GridTile : MonoBehaviour
 {
+    public GameObject towerPrefab;
+
     private SpriteRenderer _renderer;
     private Color _defaultColor;
     public Color hoverColor = Color.yellow;
@@ -43,6 +45,13 @@ public class GridTile : MonoBehaviour
         {
             Debug.Log("Tile is already occupied.");
             return;
+        }
+
+        if (towerPrefab != null)
+        {
+            GameObject tower = Instantiate(towerPrefab, transform.position, Quaternion.identity);
+            tower.transform.parent = GameObject.Find("Towers")?.transform;
+            Debug.Log("Tower placed.");
         }
 
         isSelected = !isSelected;
