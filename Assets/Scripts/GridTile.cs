@@ -57,7 +57,7 @@ public class GridTile : MonoBehaviour
         isSelected = !isSelected;
         _renderer.color = isSelected ? clickedColor : _defaultColor;
 
-        // TODO: Call GrindManager or another system to handle Tower Placement.
+        // TODO: Call GridManager or another system to handle Tower Placement.
         // For now:
         IsOccupied = isSelected;
         Debug.Log($"Tile clicked at {transform.position}");
