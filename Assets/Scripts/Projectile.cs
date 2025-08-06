@@ -7,18 +7,27 @@ public class Projectile : MonoBehaviour
     public int damage = 3;
     public float lifetime = 3f;
 
-    private Vector3 direction;
+    private Transform target;
 
-    public void SetDirection(Vector3 dir)
+    public void SetTarget(Transform newTarget)
     {
-        direction = dir.normalized;
-        Debug.Log($"SetDirection called with {direction}");
-        Destroy(gameObject, lifetime);
+        target = newTarget;
     }
 
     private void Update()
     {
-        Debug.Log("Projectile updating");
+        if (target == null)
+        {
+            target = FindClosestEnemy();
+
+            if (target == null)
+            {
+                Destroy(gameObject);
+                return;
+            }
+        }
+
+        Vector3 direction = (target.position - transform.position).normalized;
         transform.position += direction * speed * Time.deltaTime;
     }
 
@@ -35,5 +44,27 @@ public class Projectile : MonoBehaviour
 
             Destroy(gameObject);
         }
+    }
+
+    private Transform FindClosestEnemy()
+    {
+        GameObject[] enemies = GameObject.FindGameObjectsWithTag("Enemy");
+        Transform closest = null;
+        float shortestDistance = Mathf.Infinity;
+
+        foreach (GameObject enemy in enemies)
+        {
+            if (enemy == null) continue;
+
+            float distance = Vector3.Distance(transform.position, enemy.transform.position);
+
+            if (distance < shortestDistance)
+            {
+                shortestDistance = distance;
+                closest = enemy.transform;
+            }
+        }
+
+        return closest;
     }
 }

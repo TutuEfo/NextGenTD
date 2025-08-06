@@ -26,9 +26,45 @@ public class Tower : MonoBehaviour
             return;
         }
         
-        Vector3 direction = Vector3.right;
         GameObject proj = Instantiate(projectilePrefab, transform.position, Quaternion.identity);
-        proj.GetComponent<Projectile>().SetDirection((direction));
-        fireTimer = 0f;
+
+        Projectile projectile = proj.GetComponent<Projectile>();
+
+        if (projectile == null)
+        {
+            return;
+        }
+
+        Transform target = FindClosestEnemy();
+
+        if (target != null)
+        {
+            projectile.SetTarget(target);
+        }
+        else
+        {
+            Destroy(proj);
+        }
+    }
+
+    Transform FindClosestEnemy()
+    {
+        GameObject[] enemies = GameObject.FindGameObjectsWithTag("Enemy");
+        Transform closest = null;
+
+        float shortestDistance = Mathf.Infinity;
+
+        foreach (GameObject enemy in enemies)
+        {
+            float distance = Vector3.Distance(transform.position, enemy.transform.position);
+
+            if (distance < shortestDistance)
+            {
+                shortestDistance = distance;
+                closest = enemy.transform;
+            }
+        }
+
+        return closest;
     }
 }

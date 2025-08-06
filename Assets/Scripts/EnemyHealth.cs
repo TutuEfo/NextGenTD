@@ -40,6 +40,6 @@ public class EnemyHealth : MonoBehaviour
     {
         spriterenderer.color = Color.red;
         yield return new WaitForSeconds(0.1f);
-        spriterenderer.color = Color.white;
+        spriterenderer.color = Color.black;
     }
 }
