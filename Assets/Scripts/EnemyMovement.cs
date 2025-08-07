@@ -19,7 +19,7 @@ public class EnemyMovement : MonoBehaviour
         Transform target = path[currentIndex];
         transform.position = Vector2.MoveTowards(transform.position, target.position, moveSpeed * Time.deltaTime);
 
-        if (Vector2.Distance(transform.position, target.position) < 0.2f)
+        if (Vector2.Distance(transform.position, target.position) < 0.01f)
         {
             currentIndex++;
 

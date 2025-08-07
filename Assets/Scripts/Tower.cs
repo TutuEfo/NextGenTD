@@ -2,9 +2,39 @@ using UnityEngine;
 
 public class Tower : MonoBehaviour
 {
+    [Header("Tower Settings")]
     public GameObject projectilePrefab;
-    private float fireRate = 1f;
+    public float attackRange = 3f;
+    public float fireRate = 1f;
+
     private float fireTimer = 0f;
+    private Transform rangeIndicator;
+
+    private static Tower selectedTower = null;
+
+    private void Start()
+    {
+        rangeIndicator = transform.Find("RangeIndicator/RangeCircle");
+
+        if (rangeIndicator != null)
+        {
+            SpriteRenderer sr = rangeIndicator.GetComponent<SpriteRenderer>();
+
+            if (sr != null && sr.sprite != null)
+            {
+                float spriteSize = sr.sprite.bounds.size.x;
+                float desiredSize = attackRange * 2f;
+                float scaleFactor = desiredSize / spriteSize;
+
+                rangeIndicator.localScale = new Vector3(scaleFactor, scaleFactor, 1f);
+                rangeIndicator.gameObject.SetActive(false);
+            }
+        }
+        else
+        {
+            Debug.LogWarning("RangeIndicator/RangeCircle not found in prefab!");
+        }
+    }
 
     private void Update()
     {
@@ -12,53 +42,43 @@ public class Tower : MonoBehaviour
 
         if (fireTimer >= fireRate)
         {
-            // Temp shooter for tower.
-            FireProjectile();
+            Transform target = FindClosestEnemyInRange();
 
-            fireTimer = 0f;
+            if (target != null)
+            {
+                FireProjectile(target);
+                fireTimer = 0f;
+            }
         }
     }
 
-    void FireProjectile()
+    private void FireProjectile(Transform target)
     {
-        if (projectilePrefab == null)
-        {
+        if (projectilePrefab == null || target == null)
             return;
-        }
-        
-        GameObject proj = Instantiate(projectilePrefab, transform.position, Quaternion.identity);
 
+        GameObject proj = Instantiate(projectilePrefab, transform.position, Quaternion.identity);
         Projectile projectile = proj.GetComponent<Projectile>();
 
-        if (projectile == null)
-        {
-            return;
-        }
-
-        Transform target = FindClosestEnemy();
-
-        if (target != null)
+        if (projectile != null)
         {
             projectile.SetTarget(target);
         }
-        else
-        {
-            Destroy(proj);
-        }
     }
 
-    Transform FindClosestEnemy()
+    private Transform FindClosestEnemyInRange()
     {
         GameObject[] enemies = GameObject.FindGameObjectsWithTag("Enemy");
         Transform closest = null;
-
-        float shortestDistance = Mathf.Infinity;
+        float shortestDistance = attackRange;
 
         foreach (GameObject enemy in enemies)
         {
+            if (enemy == null) continue;
+
             float distance = Vector3.Distance(transform.position, enemy.transform.position);
 
-            if (distance < shortestDistance)
+            if (distance <= shortestDistance)
             {
                 shortestDistance = distance;
                 closest = enemy.transform;
@@ -66,5 +86,60 @@ public class Tower : MonoBehaviour
         }
 
         return closest;
+    }
+
+    private void OnMouseDown()
+    {
+        if (selectedTower != null && selectedTower != this)
+        {
+            selectedTower.HideRange();
+        }
+
+        if (selectedTower == this)
+        {
+            HideRange();
+            selectedTower = null;
+        }
+        else
+        {
+            ShowRange();
+            selectedTower = this;
+        }
+    }
+
+    private void ShowRange()
+    {
+        if (rangeIndicator != null)
+            rangeIndicator.gameObject.SetActive(true);
+    }
+
+    private void HideRange()
+    {
+        if (rangeIndicator != null)
+            rangeIndicator.gameObject.SetActive(false);
+    }
+
+    private void LateUpdate()
+    {
+        if (Input.GetMouseButtonDown(0))
+        {
+            Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+            RaycastHit2D hit = Physics2D.Raycast(ray.origin, ray.direction);
+
+            if (hit.collider == null || hit.collider.GetComponent<Tower>() == null)
+            {
+                if (selectedTower != null)
+                {
+                    selectedTower.HideRange();
+                    selectedTower = null;
+                }
+            }
+        }
+    }
+
+    private void OnDrawGizmosSelected()
+    {
+        Gizmos.color = Color.cyan;
+        Gizmos.DrawWireSphere(transform.position, attackRange);
     }
 }

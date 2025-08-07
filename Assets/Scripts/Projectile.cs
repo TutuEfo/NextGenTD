@@ -6,6 +6,7 @@ public class Projectile : MonoBehaviour
     public float speed = 5f;
     public int damage = 3;
     public float lifetime = 3f;
+    public float attackRange = 3f;
 
     private Transform target;
 
@@ -49,8 +50,10 @@ public class Projectile : MonoBehaviour
     private Transform FindClosestEnemy()
     {
         GameObject[] enemies = GameObject.FindGameObjectsWithTag("Enemy");
+
         Transform closest = null;
-        float shortestDistance = Mathf.Infinity;
+
+        float shortestDistance = attackRange;
 
         foreach (GameObject enemy in enemies)
         {
@@ -58,7 +61,7 @@ public class Projectile : MonoBehaviour
 
             float distance = Vector3.Distance(transform.position, enemy.transform.position);
 
-            if (distance < shortestDistance)
+            if (distance <= shortestDistance)
             {
                 shortestDistance = distance;
                 closest = enemy.transform;

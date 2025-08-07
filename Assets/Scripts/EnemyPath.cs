@@ -7,16 +7,13 @@ public class EnemyPath : MonoBehaviour
 
     private void OnDrawGizmos()
     {
-        if (waypoints == null || waypoints.Length == 0)
-        {
-            return;
-        }
+        if (waypoints == null || waypoints.Length < 2) return;
 
         Gizmos.color = Color.red;
-
         for (int i = 0; i < waypoints.Length - 1; i++)
         {
-            Gizmos.DrawLine(waypoints[i].position, waypoints[i + 1].position);
+            if (waypoints[i] != null && waypoints[i + 1] != null)
+                Gizmos.DrawLine(waypoints[i].position, waypoints[i + 1].position);
         }
     }
 }
