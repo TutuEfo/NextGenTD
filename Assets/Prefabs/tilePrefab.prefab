@@ -149,4 +149,4 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   towerPrefab: {fileID: 1359283179339956017, guid: a25a9dc019da3a641b8f0fab7c6cacc7, type: 3}
   hoverColor: {r: 1, g: 0.92156863, b: 0.015686275, a: 1}
-  clickedColor: {r: 0, g: 1, b: 0, a: 1}
+  clickedColor: {r: 1, g: 0.54481244, b: 0, a: 1}

@@ -12,6 +12,8 @@ public class GridTile : MonoBehaviour
     public Color hoverColor = Color.yellow;
     public Color clickedColor = Color.green;
 
+    public int towerCost = 50;
+
     public bool IsOccupied { get; private set; } = false;
     public bool IsPath { get; set; } = false;
 
@@ -44,6 +46,12 @@ public class GridTile : MonoBehaviour
         if (IsOccupied)
         {
             Debug.Log("Tile is already occupied.");
+            return;
+        }
+
+        if (!GameManager.Instance.SpendGold(towerCost))
+        {
+            Debug.Log("Not enough gold!");
             return;
         }
 

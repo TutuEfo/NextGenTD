@@ -28,11 +28,6 @@ public class EnemyMovement : MonoBehaviour
                 Destroy(gameObject);
             }
         }
-
-        if (Input.GetKeyDown(KeyCode.Space))
-        {
-            GetComponent<EnemyHealth>().TakeDamage(3);
-        }
     }
 
     public void SetPath(Transform[] waypoints)

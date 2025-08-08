@@ -5,12 +5,17 @@ public class Tower : MonoBehaviour
     [Header("Tower Settings")]
     public GameObject projectilePrefab;
     public float attackRange = 3f;
-    public float fireRate = 1f;
+    public float fireRate = 0.6f;
+    public int towerDamage = 3;
 
     private float fireTimer = 0f;
     private Transform rangeIndicator;
 
     private static Tower selectedTower = null;
+
+    private int upgradeLevel = 0;
+    private int maxUpgradeLevel = 3;
+    private int upgradeCost = 30;
 
     private void Start()
     {
@@ -52,6 +57,34 @@ public class Tower : MonoBehaviour
         }
     }
 
+    public bool Upgrade()
+    {
+        if (upgradeLevel >= maxUpgradeLevel)
+        {
+            Debug.Log("Max upgrade level reached!");
+            return false;
+        }
+
+        upgradeLevel++;
+
+        if (!GameManager.Instance.SpendGold(upgradeCost * upgradeLevel))
+        {
+            Debug.Log("Not enough gold!");
+            upgradeLevel--;
+            return false;
+        }
+
+        attackRange += 0.5f;
+        fireRate -= 0.05f;
+
+        GameObject proj = Instantiate(projectilePrefab, transform.position, Quaternion.identity);
+        Projectile projectile = proj.GetComponent<Projectile>();
+
+        towerDamage = 5;
+
+        return true;
+    }
+
     private void FireProjectile(Transform target)
     {
         if (projectilePrefab == null || target == null)
@@ -62,6 +95,7 @@ public class Tower : MonoBehaviour
 
         if (projectile != null)
         {
+            projectile.damage = towerDamage;
             projectile.SetTarget(target);
         }
     }
@@ -90,20 +124,24 @@ public class Tower : MonoBehaviour
 
     private void OnMouseDown()
     {
+        var selector = FindObjectOfType<TowerSelector>();
+        if (selector == null)
+            return;
+
         if (selectedTower != null && selectedTower != this)
-        {
             selectedTower.HideRange();
-        }
 
         if (selectedTower == this)
         {
             HideRange();
             selectedTower = null;
+            selector.DeselectTower();
         }
         else
         {
             ShowRange();
             selectedTower = this;
+            selector.SelectTower(this);
         }
     }
 

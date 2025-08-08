@@ -6,18 +6,20 @@ public class EnemySpawnerTemp : MonoBehaviour
     public GameObject enemyPrefab;
     public EnemyPath path;
 
-    public float spawnRate = 2f;
-    private float timer = 0f;
-
-    private void Update()
+    public void SpawnEnemy()
     {
-        timer += Time.deltaTime;
-
-        if (timer >= spawnRate)
+        if (path == null || path.waypoints == null || path.waypoints.Length == 0)
         {
-            GameObject enemy = Instantiate(enemyPrefab, path.waypoints[0].position, Quaternion.identity);
-            enemy.GetComponent<EnemyMovement>().SetPath((path.waypoints));
-            timer = 0f;
+            Debug.LogWarning("Enemy path or waypoints not set!");
+            return;
+        }
+
+        GameObject enemy = Instantiate(enemyPrefab, path.waypoints[0].position, Quaternion.identity);
+        EnemyMovement movement = enemy.GetComponent<EnemyMovement>();
+
+        if (movement != null)
+        {
+            movement.SetPath(path.waypoints);
         }
     }
 }
