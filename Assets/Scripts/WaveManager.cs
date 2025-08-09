@@ -10,7 +10,6 @@ public class WaveManager : MonoBehaviour
     public int maxWaves = 10;
 
     private int enemiesSpawned = 0;
-    private int enemiesKilled = 0;
 
     private bool waveActivate = false;
 
@@ -28,7 +27,6 @@ public class WaveManager : MonoBehaviour
 
         currentWave++;
         waveActivate = true;
-        enemiesKilled = 0;
         enemiesSpawned = 0;
 
         StartCoroutine(SpawnWave());
@@ -36,23 +34,18 @@ public class WaveManager : MonoBehaviour
 
     private IEnumerator SpawnWave()
     {
-        while (enemiesSpawned < (enemiesPerWave * currentWave + 1))
+        while (enemiesSpawned < (enemiesPerWave * currentWave))
         {
             spawner.SpawnEnemy();
             enemiesSpawned++;
-            yield return new WaitForSeconds(1f - (0.09f * (currentWave + 1)));
+            yield return new WaitForSeconds(1f - (0.09f * currentWave));
         }
-    }
 
-    public void OnEnemyKilled()
-    {
-        enemiesKilled++;
+        waveActivate = false;
 
-        if (enemiesKilled >= enemiesPerWave)
-        {
-            waveActivate = false;
+        GameManager.Instance.WaveCompleted();
 
-            StartNextWave();
-        }
+        yield return new WaitForSeconds(15f);
+        StartNextWave();
     }
 }

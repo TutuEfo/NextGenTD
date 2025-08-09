@@ -7,7 +7,14 @@ public class EnemyMovement : MonoBehaviour
     public Transform[] path;
     public float moveSpeed = 2f;
 
+    public GameManager manager;
+
     private int currentIndex = 0;
+
+    private void Awake()
+    {
+        manager = FindObjectOfType<GameManager>();
+    }
 
     private void Update()
     {
@@ -26,6 +33,7 @@ public class EnemyMovement : MonoBehaviour
             if (currentIndex >= path.Length)
             {
                 Destroy(gameObject);
+                manager.EnemyReachGoal();
             }
         }
     }

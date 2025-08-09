@@ -52,11 +52,6 @@ public class EnemyHealth : MonoBehaviour
 
         WaveManager waveManager = WaveManager.FindFirstObjectByType<WaveManager>();
 
-        if (waveManager != null)
-        {
-            waveManager.OnEnemyKilled();
-        }
-
         Debug.Log($"{gameObject.name} died.");
         Destroy(gameObject);
     }
