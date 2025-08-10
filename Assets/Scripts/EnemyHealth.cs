@@ -11,9 +11,12 @@ public class EnemyHealth : MonoBehaviour
     public GameObject healthBarPrefab;
     private HealthBar healthBar;
 
+    WaveManager waveManager;
+
     private void Awake()
     {
         currentHealth = maxHealth;
+        waveManager = FindFirstObjectByType<WaveManager>();
 
         if (healthBarParent != null && healthBarPrefab != null)
         {
@@ -28,7 +31,6 @@ public class EnemyHealth : MonoBehaviour
     public void TakeDamage(int damage)
     {
         currentHealth -= damage;
-        Debug.Log($"{gameObject.name} took {damage} damage. HP left: {currentHealth}");
 
         if (spriterenderer != null)
         {
@@ -49,10 +51,8 @@ public class EnemyHealth : MonoBehaviour
     private void Die()
     {
         GameManager.Instance.AddGold(10);
-
-        WaveManager waveManager = WaveManager.FindFirstObjectByType<WaveManager>();
-
-        Debug.Log($"{gameObject.name} died.");
+        var wm = FindFirstObjectByType<WaveManager>();
+        wm?.OnEnemyRemoved();
         Destroy(gameObject);
     }
 

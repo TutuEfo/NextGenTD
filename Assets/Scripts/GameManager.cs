@@ -45,28 +45,28 @@ public class GameManager : MonoBehaviour
     public void WaveCompleted()
     {
         Debug.Log("Wave completed: " + currentWave);
-        
-        currentWave++;
-        UpdateWaveUI();
 
-        if (currentWave >= totalWaves)
+        if (currentWave > totalWaves)
         {
             WinGame();
         }
+
+        currentWave++;
+        UpdateWaveUI();
     }
 
     private void GameOver()
     {
-        Debug.Log("Game Over!");
         gameEnded = true;
         gameOverPanel.SetActive(true);
+        UIButtons.PauseGameUI();
     }
 
     private void WinGame()
     {
-        Debug.Log("You Win!");
         gameEnded = true;
         winPanel.SetActive(true);
+        UIButtons.PauseGameUI();
     }
 
 
@@ -128,7 +128,7 @@ public class GameManager : MonoBehaviour
     {
         if (waveText != null)
         {
-            waveText.text = $"Waves: {currentWave}";
+            waveText.text = $"Wave: {currentWave}";
         }
     }
 }

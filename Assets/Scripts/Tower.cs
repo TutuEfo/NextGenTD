@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.EventSystems;
 
 public class Tower : MonoBehaviour
 {
@@ -15,40 +16,21 @@ public class Tower : MonoBehaviour
 
     private int upgradeLevel = 0;
     private int maxUpgradeLevel = 3;
-    private int upgradeCost = 30;
+    public int upgradeCost = 30;
 
     private void Start()
     {
         rangeIndicator = transform.Find("RangeIndicator/RangeCircle");
-
-        if (rangeIndicator != null)
-        {
-            SpriteRenderer sr = rangeIndicator.GetComponent<SpriteRenderer>();
-
-            if (sr != null && sr.sprite != null)
-            {
-                float spriteSize = sr.sprite.bounds.size.x;
-                float desiredSize = attackRange * 2f;
-                float scaleFactor = desiredSize / spriteSize;
-
-                rangeIndicator.localScale = new Vector3(scaleFactor, scaleFactor, 1f);
-                rangeIndicator.gameObject.SetActive(false);
-            }
-        }
-        else
-        {
-            Debug.LogWarning("RangeIndicator/RangeCircle not found in prefab!");
-        }
+        if (rangeIndicator != null) { UpdateRangeIndicatorScale(); rangeIndicator.gameObject.SetActive(false); }
+        else Debug.LogWarning("RangeIndicator/RangeCircle not found in prefab!");
     }
 
     private void Update()
     {
         fireTimer += Time.deltaTime;
-
         if (fireTimer >= fireRate)
         {
             Transform target = FindClosestEnemyInRange();
-
             if (target != null)
             {
                 FireProjectile(target);
@@ -65,34 +47,40 @@ public class Tower : MonoBehaviour
             return false;
         }
 
-        upgradeLevel++;
-
-        if (!GameManager.Instance.SpendGold(upgradeCost * upgradeLevel))
+        int cost = upgradeCost * (upgradeLevel + 1);
+        if (!GameManager.Instance.SpendGold(cost))
         {
             Debug.Log("Not enough gold!");
-            upgradeLevel--;
             return false;
         }
 
+        upgradeLevel++;
         attackRange += 0.5f;
-        fireRate -= 0.05f;
+        fireRate = Mathf.Max(0.1f, fireRate - 0.05f);
 
-        GameObject proj = Instantiate(projectilePrefab, transform.position, Quaternion.identity);
-        Projectile projectile = proj.GetComponent<Projectile>();
-
-        towerDamage = 5;
-
+        UpdateRangeIndicatorScale();
+        Debug.Log($"Tower upgraded to level {upgradeLevel} (DMG {towerDamage}, Range {attackRange}, FR {fireRate})");
         return true;
+    }
+
+    private void UpdateRangeIndicatorScale()
+    {
+        if (rangeIndicator == null) return;
+        var sr = rangeIndicator.GetComponent<SpriteRenderer>();
+        if (sr == null || sr.sprite == null) return;
+
+        float spriteSize = sr.sprite.bounds.size.x;
+        float desiredSize = attackRange * 2f;
+        float scaleFactor = desiredSize / spriteSize;
+        rangeIndicator.localScale = new Vector3(scaleFactor, scaleFactor, 1f);
     }
 
     private void FireProjectile(Transform target)
     {
-        if (projectilePrefab == null || target == null)
-            return;
+        if (projectilePrefab == null || target == null) return;
 
         GameObject proj = Instantiate(projectilePrefab, transform.position, Quaternion.identity);
         Projectile projectile = proj.GetComponent<Projectile>();
-
         if (projectile != null)
         {
             projectile.damage = towerDamage;
@@ -109,24 +97,23 @@ public class Tower : MonoBehaviour
         foreach (GameObject enemy in enemies)
         {
             if (enemy == null) continue;
-
             float distance = Vector3.Distance(transform.position, enemy.transform.position);
-
             if (distance <= shortestDistance)
             {
                 shortestDistance = distance;
                 closest = enemy.transform;
             }
         }
-
         return closest;
     }
 
     private void OnMouseDown()
     {
-        var selector = FindObjectOfType<TowerSelector>();
-        if (selector == null)
+        if (EventSystem.current != null && EventSystem.current.IsPointerOverGameObject())
             return;
+
+        var selector = FindObjectOfType<TowerSelector>(true);
+        if (selector == null) return;
 
         if (selectedTower != null && selectedTower != this)
             selectedTower.HideRange();
@@ -145,32 +132,28 @@ public class Tower : MonoBehaviour
         }
     }
 
-    private void ShowRange()
-    {
-        if (rangeIndicator != null)
-            rangeIndicator.gameObject.SetActive(true);
-    }
-
-    private void HideRange()
-    {
-        if (rangeIndicator != null)
-            rangeIndicator.gameObject.SetActive(false);
-    }
+    private void ShowRange() { if (rangeIndicator != null) rangeIndicator.gameObject.SetActive(true); }
+    private void HideRange() { if (rangeIndicator != null) rangeIndicator.gameObject.SetActive(false); }
 
     private void LateUpdate()
     {
-        if (Input.GetMouseButtonDown(0))
-        {
-            Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-            RaycastHit2D hit = Physics2D.Raycast(ray.origin, ray.direction);
+        if (!Input.GetMouseButtonDown(0)) return;
 
-            if (hit.collider == null || hit.collider.GetComponent<Tower>() == null)
+        if (EventSystem.current != null && EventSystem.current.IsPointerOverGameObject())
+            return;
+
+        Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+        RaycastHit2D hit = Physics2D.Raycast(ray.origin, ray.direction);
+
+        if (hit.collider == null || hit.collider.GetComponent<Tower>() == null)
+        {
+            if (selectedTower != null)
             {
-                if (selectedTower != null)
-                {
-                    selectedTower.HideRange();
-                    selectedTower = null;
-                }
+                selectedTower.HideRange();
+                selectedTower = null;
+
+                var selector = FindObjectOfType<TowerSelector>(true);
+                if (selector != null) selector.DeselectTower();
             }
         }
     }

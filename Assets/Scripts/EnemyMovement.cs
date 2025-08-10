@@ -32,8 +32,11 @@ public class EnemyMovement : MonoBehaviour
 
             if (currentIndex >= path.Length)
             {
-                Destroy(gameObject);
+                var wm = FindFirstObjectByType<WaveManager>();
+                wm?.OnEnemyRemoved();
+
                 manager.EnemyReachGoal();
+                Destroy(gameObject);
             }
         }
     }

@@ -1,4 +1,3 @@
-using System;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -19,26 +18,19 @@ public class TowerSelector : MonoBehaviour
         if (selectedTower != null)
         {
             bool upgraded = selectedTower.Upgrade();
-
-            if (!upgraded)
-            {
-                Debug.Log("Upgrade Failed");
-            }
+            if (!upgraded) Debug.Log("Upgrade failed (max level or not enough gold).");
+        }
+        else
+        {
+            Debug.Log("No tower selected to upgrade.");
         }
     }
 
     public void SelectTower(Tower tower)
     {
+        if (selectedTower == tower) return;
         selectedTower = tower;
-
-        if (selectedTower != null)
-        {
-            upgradePanel.SetActive(true);
-        }
-        else
-        {
-            upgradePanel.SetActive(false);
-        }
+        upgradePanel.SetActive(true);
     }
 
     public void DeselectTower()
