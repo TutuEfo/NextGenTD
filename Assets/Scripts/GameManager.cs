@@ -46,13 +46,13 @@ public class GameManager : MonoBehaviour
     {
         Debug.Log("Wave completed: " + currentWave);
 
+        currentWave++;
+        UpdateWaveUI();
+
         if (currentWave > totalWaves)
         {
             WinGame();
         }
-
-        currentWave++;
-        UpdateWaveUI();
     }
 
     private void GameOver()

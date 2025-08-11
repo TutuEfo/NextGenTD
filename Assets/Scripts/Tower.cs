@@ -8,6 +8,7 @@ public class Tower : MonoBehaviour
     public float attackRange = 3f;
     public float fireRate = 0.6f;
     public int towerDamage = 3;
+    public int buildCost = 30;
 
     private float fireTimer = 0f;
     private Transform rangeIndicator;

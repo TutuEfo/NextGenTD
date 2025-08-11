@@ -46,7 +46,11 @@ public class GridTile : MonoBehaviour
             return;
         }
 
-        if (!GameManager.Instance.SpendGold(towerCost))
+        int cost = towerCost;
+        var towerComp = towerPrefab != null ? towerPrefab.GetComponent<Tower>() : null;
+        if (towerComp != null) cost = towerComp.buildCost;
+
+        if (!GameManager.Instance.SpendGold(cost))
         {
             Debug.Log("Not enough gold!");
             return;
