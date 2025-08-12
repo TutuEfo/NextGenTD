@@ -3,8 +3,13 @@ using UnityEngine;
 
 public class Projectile : MonoBehaviour
 {
+    [Header("Damage & Effects")]
+    public int damage = 1;
+    public bool applySlow = false;
+    public float slowPercent = 0.4f;
+    public float slowDuration = 2f;
+    
     public float speed = 5f;
-    public int damage = 3;
     public float lifetime = 3f;
     public float attackRange = 3f;
 
@@ -41,6 +46,16 @@ public class Projectile : MonoBehaviour
             if (enemy != null)
             {
                 enemy.TakeDamage(damage);
+            }
+
+            if (applySlow)
+            {
+                var status = other.GetComponent<StatusController>();
+                
+                if (status)
+                {
+                    status.ApplySlow(slowPercent, slowDuration);
+                }
             }
 
             Destroy(gameObject);
