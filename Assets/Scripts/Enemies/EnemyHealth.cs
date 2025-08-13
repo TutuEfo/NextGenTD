@@ -6,6 +6,8 @@ public class EnemyHealth : MonoBehaviour
     public int maxHealth = 10;
     private int currentHealth;
 
+    public Color defaultColor;
+
     private SpriteRenderer spriterenderer;
     public Transform healthBarParent;
     public GameObject healthBarPrefab;
@@ -21,6 +23,8 @@ public class EnemyHealth : MonoBehaviour
         if (healthBarParent != null && healthBarPrefab != null)
         {
             spriterenderer = GetComponent<SpriteRenderer>();
+
+            defaultColor = spriterenderer.color;
 
             GameObject healthObj = Instantiate(healthBarPrefab, healthBarParent.position, Quaternion.identity, healthBarParent);
             healthBar = healthObj.GetComponent<HealthBar>();
@@ -60,6 +64,6 @@ public class EnemyHealth : MonoBehaviour
     {
         spriterenderer.color = Color.red;
         yield return new WaitForSeconds(0.1f);
-        spriterenderer.color = Color.black;
+        spriterenderer.color = defaultColor;
     }
 }

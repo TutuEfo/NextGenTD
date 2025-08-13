@@ -183,7 +183,7 @@ MonoBehaviour:
   projectilePrefab: {fileID: 322469367316482892, guid: ee5aa36fb31e39148aa4149f7065a64a, type: 3}
   attackRange: 3
   fireRate: 0.6
-  towerDamage: 3
+  towerDamage: 2
   buildCost: 50
   upgradeCost: 30
 --- !u!1 &4476936679336263931

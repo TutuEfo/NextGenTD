@@ -9,6 +9,10 @@ public class WaveManager : MonoBehaviour
     public int maxWaves = 10;
     public float spawnInterval = 0.8f;
 
+    public GameObject normalPrefab;
+    public GameObject sprinterPrefab;
+
+    public float sprinterChance = 0.0f;
     private int enemiesSpawned = 0;
     private int enemiesAlive = 0;
     private bool isSpawning = false;
@@ -35,7 +39,8 @@ public class WaveManager : MonoBehaviour
 
         for (int i = 0; i < total; i++)
         {
-            spawner.SpawnEnemy();
+            GameObject prefab = (Random.value < sprinterChance) ? sprinterPrefab : normalPrefab;
+            spawner.SpawnEnemy(prefab);
             enemiesSpawned++;
             yield return new WaitForSeconds(spawnInterval);
         }
