@@ -12,6 +12,7 @@ GameObject:
   - component: {fileID: 6828741166578869793}
   - component: {fileID: 8446668593742576308}
   - component: {fileID: 6126070537564918888}
+  - component: {fileID: 4420925689948657192}
   m_Layer: 0
   m_Name: tilePrefab
   m_TagString: Untagged
@@ -150,3 +151,19 @@ MonoBehaviour:
   towerPrefab: {fileID: 1359283179339956017, guid: a25a9dc019da3a641b8f0fab7c6cacc7, type: 3}
   hoverColor: {r: 1, g: 0.92156863, b: 0.015686275, a: 1}
   clickedColor: {r: 1, g: 0.54481244, b: 0, a: 1}
+  towerCost: 50
+--- !u!114 &4420925689948657192
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6469295695514186756}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4dcd3109e4b31ea4292ace7d3276dc66, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  catalog: []
+  occupied: 0
+  placementOffset: {x: 0, y: 0, z: 0}

@@ -2,15 +2,18 @@ using UnityEngine;
 
 public class TowerPlacer : MonoBehaviour
 {
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
-    void Start()
-    {
-        
-    }
+    public static TowerPlacer Instance;
+    public int gold = 100;
 
-    // Update is called once per frame
-    void Update()
+    void Awake() => Instance = this;
+
+    public bool CanAfford(TowerDefinition def) => gold >= def.cost;
+
+    public bool TryPlace(TowerDefinition def, Vector3 worldPos)
     {
-        
+        if (!CanAfford(def) || def.prefab == null) return false;
+        Instantiate(def.prefab, worldPos, Quaternion.identity);
+        gold -= def.cost;
+        return true;
     }
 }
