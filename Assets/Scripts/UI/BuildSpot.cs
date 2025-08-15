@@ -17,5 +17,10 @@ public class BuildSpot : MonoBehaviour, IPointerClickHandler
     }
 
     public Vector3 GetBuildWorldPos() => transform.position + placementOffset;
-    public void MarkOccupied(bool value) => occupied = value;
+    public void MarkOccupied(bool value)
+    {
+        occupied = value;
+        var tile = GetComponent<GridTile>();
+        if (tile) tile.SetOccupiedVisual(value);
+    }
 }

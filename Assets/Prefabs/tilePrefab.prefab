@@ -164,6 +164,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4dcd3109e4b31ea4292ace7d3276dc66, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  catalog: []
+  catalog:
+  - {fileID: 11400000, guid: 6c92954dd92c50f49be102b05af9aedf, type: 2}
+  - {fileID: 11400000, guid: c73e64d14acf0ab49b8c490254e26252, type: 2}
+  - {fileID: 11400000, guid: 82e8be40fdd21ba40a208b02cc2b96ab, type: 2}
   occupied: 0
   placementOffset: {x: 0, y: 0, z: 0}

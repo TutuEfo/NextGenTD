@@ -1,71 +1,46 @@
 using UnityEngine;
-using UnityEngine.EventSystems;
 
-[RequireComponent(typeof(SpriteRenderer), typeof(Collider2D))]
+[RequireComponent(typeof(SpriteRenderer))]
 public class GridTile : MonoBehaviour
 {
-    public GameObject towerPrefab;
-
-    private SpriteRenderer _renderer;
-    private Color _defaultColor;
+    [Header("Colors")]
     public Color hoverColor = Color.yellow;
     public Color clickedColor = Color.green;
 
-    public int towerCost = 50;
+    [Header("Flags")]
+    public bool IsPath = false;
 
-    public bool IsOccupied { get; private set; } = false;
-    public bool IsPath { get; set; } = false;
+    private SpriteRenderer _renderer;
+    private Color _defaultColor;
+    private BuildSpot _spot;
 
-    private Collider2D _collider;
-
-    private void Awake()
+    void Awake()
     {
         _renderer = GetComponent<SpriteRenderer>();
-        _collider = GetComponent<Collider2D>();
         _defaultColor = _renderer.color;
+        _spot = GetComponent<BuildSpot>();
     }
 
-    private void OnMouseEnter()
+    void OnMouseEnter()
     {
-        if (!IsOccupied) _renderer.color = hoverColor;
+        if (IsPath) return;
+        if (_spot != null && _spot.occupied) return;
+
+        _renderer.color = hoverColor;
     }
 
-    private void OnMouseExit()
+    void OnMouseExit()
     {
-        if (!IsOccupied) _renderer.color = _defaultColor;
+        if (_spot != null && _spot.occupied)
+        {
+            _renderer.color = clickedColor;
+            return;
+        }
+        _renderer.color = _defaultColor;
     }
 
-    private void OnMouseDown()
+    public void SetOccupiedVisual(bool occupied)
     {
-        if (EventSystem.current != null && EventSystem.current.IsPointerOverGameObject())
-            return;
-
-        if (IsOccupied)
-        {
-            Debug.Log("Tile is already occupied.");
-            return;
-        }
-
-        int cost = towerCost;
-        var towerComp = towerPrefab != null ? towerPrefab.GetComponent<Tower>() : null;
-        if (towerComp != null) cost = towerComp.buildCost;
-
-        if (!GameManager.Instance.SpendGold(cost))
-        {
-            Debug.Log("Not enough gold!");
-            return;
-        }
-
-        if (towerPrefab != null)
-        {
-            GameObject tower = Instantiate(towerPrefab, transform.position, Quaternion.identity);
-            tower.transform.parent = GameObject.Find("Towers")?.transform;
-            Debug.Log("Tower placed.");
-        }
-
-        IsOccupied = true;
-        _renderer.color = clickedColor;
-
-        if (_collider != null) _collider.enabled = false;
+        _renderer.color = occupied ? clickedColor : _defaultColor;
     }
 }
